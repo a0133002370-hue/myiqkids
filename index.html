@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyIQKids - Platform Permainan Pendidikan Bijak untuk Kanak-kanak</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            yellow: '#f59e0b',
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            coral: '#f43f5e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .float-slow {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(16, 185, 129, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSection('home')">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 transform hover:rotate-6 transition">
+                    <i class="fa-solid fa-puzzle-piece text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold font-heading bg-gradient-to-r from-brand-600 to-blue-600 bg-clip-text text-transparent">MyIQKids</span>
+                    <span class="block text-[10px] font-bold text-amber-500 tracking-wider uppercase">Smart Fun Academy</span>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                <button onclick="switchSection('home')" id="nav-home" class="transition hover:text-brand-600 text-brand-600">Utama</button>
+                <button onclick="switchSection('games')" id="nav-games" class="transition hover:text-brand-600 flex items-center gap-1.5"><i class="fa-solid fa-gamepad text-amber-500"></i> Permainan</button>
+                <button onclick="switchSection('dashboard')" id="nav-dashboard" class="transition hover:text-brand-600">Dashboard Ibu Bapa</button>
+                <button onclick="switchSection('benefits')" id="nav-benefits" class="transition hover:text-brand-600">Kelebihan</button>
+                <button onclick="switchSection('pricing')" id="nav-pricing" class="transition hover:text-brand-600">Harga</button>
+            </nav>
+
+            <!-- CTA / Parent Profile -->
+            <div class="flex items-center space-x-3">
+                <button onclick="switchSection('pricing')" class="hidden sm:inline-flex px-5 py-2.5 bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20 transition transform active:scale-95">
+                    Cuba Percuma 7 Hari
+                </button>
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-600 hover:text-brand-600 p-2 focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-6 py-4 space-y-3 shadow-lg">
+            <button onclick="switchSection('home'); toggleMobileMenu();" class="block w-full text-left font-semibold text-slate-700 py-1">Utama</button>
+            <button onclick="switchSection('games'); toggleMobileMenu();" class="block w-full text-left font-semibold text-slate-700 py-1">Permainan</button>
+            <button onclick="switchSection('dashboard'); toggleMobileMenu();" class="block w-full text-left font-semibold text-slate-700 py-1">Dashboard Ibu Bapa</button>
+            <button onclick="switchSection('benefits'); toggleMobileMenu();" class="block w-full text-left font-semibold text-slate-700 py-1">Kelebihan</button>
+            <button onclick="switchSection('pricing'); toggleMobileMenu();" class="block w-full text-left font-semibold text-slate-700 py-1">Harga</button>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+
+        <!-- SECTION: HOME / HERO -->
+        <section id="section-home" class="fade-in">
+            <div class="relative bg-gradient-to-b from-emerald-50/70 via-blue-50/30 to-white py-16 md:py-24 overflow-hidden">
+                <!-- Background decorative shapes -->
+                <div class="absolute top-12 left-10 w-24 h-24 bg-amber-200/40 rounded-full blur-xl float-slow"></div>
+                <div class="absolute bottom-10 right-10 w-36 h-36 bg-brand-500/10 rounded-full blur-2xl float-slow" style="animation-delay: 2s;"></div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-amber-100 text-amber-800 shadow-sm">
+                            <i class="fa-solid fa-shield-heart mr-2 text-rose-500"></i> 100% Selamat • Tanpa Iklan • Disahkan Pendidik
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-heading text-slate-900 tracking-tight leading-tight">
+                            Bimbing Anak Anda <span class="bg-gradient-to-r from-brand-600 to-blue-600 bg-clip-text text-transparent">Cerdas & Ceria</span> Melalui Permainan Edukatif!
+                        </h1>
+                        <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
+                            Platform permainan interaktif yang direka khas oleh pakar pendidikan untuk kanak-kanak usia 5 hingga 12 tahun. Menggabungkan keseronokan game moden dengan silibus pembelajaran terbukti!
+                        </p>
+
+                        <!-- Trust Badges Row -->
+                        <div class="grid grid-cols-3 gap-3 py-2">
+                            <div class="flex items-center space-x-2 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-lg"></i>
+                                <span class="text-xs font-bold text-slate-700">100% Selamat untuk Anak</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                                <i class="fa-solid fa-child-reaching text-blue-500 text-lg"></i>
+                                <span class="text-xs font-bold text-slate-700">Sesuai Umur 5-12</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                                <i class="fa-solid fa-graduation-cap text-amber-500 text-lg"></i>
+                                <span class="text-xs font-bold text-slate-700">Silibus Diluluskan</span>
+                            </div>
+                        </div>
+
+                        <!-- Hero CTAs -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
+                            <button onclick="switchSection('games')" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-brand-500/30 transition transform hover:-translate-y-0.5 text-center flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-gamepad text-amber-300"></i> Mula Bermain Sekarang
+                            </button>
+                            <button onclick="switchSection('dashboard')" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-2xl border-2 border-slate-200 shadow-sm transition text-center flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-chart-line text-blue-500"></i> Lihat Dashboard Ibu Bapa
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hero Card Graphic -->
+                    <div class="relative">
+                        <div class="relative mx-auto max-w-md bg-gradient-to-tr from-brand-500 via-blue-500 to-purple-500 rounded-3xl p-3 shadow-2xl">
+                            <div class="bg-white rounded-2xl p-6 space-y-5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">Sorotan Harian</span>
+                                    <span class="text-amber-500 text-sm font-bold flex items-center gap-1"><i class="fa-solid fa-fire text-amber-500"></i> Streak 7 Hari!</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="text-xl font-bold font-heading text-slate-900">Maths Safari: Tahap 3</h3>
+                                    <p class="text-xs text-slate-500">Alif berjaya menjawab 30 soalan dengan ketepatan 95% hari ini!</p>
+                                </div>
+                                <div class="space-y-1.5 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <div class="flex justify-between text-xs font-bold text-slate-700">
+                                        <span>Penguasaan Minda</span>
+                                        <span class="text-brand-600">90% Sempurna</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                                        <div class="bg-gradient-to-r from-brand-500 to-blue-500 h-full rounded-full" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <button onclick="switchSection('games')" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 shadow-md">
+                                    <i class="fa-solid fa-rocket text-amber-400"></i> Terokai Misi Permainan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: GAMES & AGE GROUP EXPLORER -->
+        <section id="section-games" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
+            <div class="text-center max-w-3xl mx-auto mb-10 space-y-3">
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 uppercase tracking-wider">Pusat Permainan MyIQKids</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900">Terokai Permainan Mengikut Umur & Minat</h2>
+                <p class="text-sm sm:text-base text-slate-600">Pilih kumpulan umur anak anda di bawah untuk memulakan permainan interaktif yang menyeronokkan.</p>
+            </div>
+
+            <!-- Age Group Filter Tabs -->
+            <div class="flex flex-wrap justify-center gap-2 mb-10">
+                <button onclick="filterGames('all')" id="filter-all" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-md transition">Semua Umur</button>
+                <button onclick="filterGames('5-7')" id="filter-5-7" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition">5-7 Tahun (Prasekolah)</button>
+                <button onclick="filterGames('8-10')" id="filter-8-10" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition">8-10 Tahun (Tahap 1)</button>
+                <button onclick="filterGames('11-12')" id="filter-11-12" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition">11-12 Tahun (Tahap 2)</button>
+            </div>
+
+            <!-- Game Cards Grid -->
+            <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Game Card 1: Maths Safari -->
+                <div data-age="5-7" class="game-item bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-brand-500 card-shadow transition flex flex-col justify-between group">
+                    <div>
+                        <div class="h-40 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 p-6 flex flex-col justify-between text-white mb-4 relative overflow-hidden group-hover:scale-[1.02] transition">
+                            <i class="fa-solid fa-calculator absolute -bottom-4 -right-4 text-7xl text-white/20"></i>
+                            <span class="self-start px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">Matematik • Umur 5-7</span>
+                            <h3 class="font-extrabold text-xl font-heading">Maths Safari</h3>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Pengembaraan Kira Buah</h4>
+                        <p class="text-xs text-slate-500">Kira jumlah buah-buahan hutan dan selesaikan teka-teki tambah pantas!</p>
+                        <div class="flex items-center mt-3 text-amber-500 text-xs gap-1">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <span class="text-slate-400 ml-1">(4.9/5)</span>
+                        </div>
+                    </div>
+                    <button onclick="openMiniGame('math')" class="mt-6 w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> Main Sekarang
+                    </button>
+                </div>
+
+                <!-- Game Card 2: Kosa Kata Juara -->
+                <div data-age="8-10" class="game-item bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-brand-500 card-shadow transition flex flex-col justify-between group">
+                    <div>
+                        <div class="h-40 rounded-2xl bg-gradient-to-tr from-fuchsia-500 to-pink-600 p-6 flex flex-col justify-between text-white mb-4 relative overflow-hidden group-hover:scale-[1.02] transition">
+                            <i class="fa-solid fa-book-bookmark absolute -bottom-4 -right-4 text-7xl text-white/20"></i>
+                            <span class="self-start px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">Bahasa • Umur 8-10</span>
+                            <h3 class="font-extrabold text-xl font-heading">Kosa Kata Juara</h3>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Susun Huruf & Ejaan</h4>
+                        <p class="text-xs text-slate-500">Cabaran ejaan perkataan Bahasa Melayu & Inggeris untuk mengasah penguasaan bahasa.</p>
+                        <div class="flex items-center mt-3 text-amber-500 text-xs gap-1">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                            <span class="text-slate-400 ml-1">(4.8/5)</span>
+                        </div>
+                    </div>
+                    <button onclick="openMiniGame('word')" class="mt-6 w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> Main Sekarang
+                    </button>
+                </div>
+
+                <!-- Game Card 3: Sains Kapsul -->
+                <div data-age="11-12" class="game-item bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-brand-500 card-shadow transition flex flex-col justify-between group">
+                    <div>
+                        <div class="h-40 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 p-6 flex flex-col justify-between text-white mb-4 relative overflow-hidden group-hover:scale-[1.02] transition">
+                            <i class="fa-solid fa-atom absolute -bottom-4 -right-4 text-7xl text-white/20"></i>
+                            <span class="self-start px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">Sains • Umur 11-12</span>
+                            <h3 class="font-extrabold text-xl font-heading">Sains Kapsul</h3>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Eksperimen Angkasa Maya</h4>
+                        <p class="text-xs text-slate-500">Terokai sistem suria, fizik asas, dan biologi melalui kuiz eksperimen interaktif.</p>
+                        <div class="flex items-center mt-3 text-amber-500 text-xs gap-1">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <span class="text-slate-400 ml-1">(5.0/5)</span>
+                        </div>
+                    </div>
+                    <button onclick="openMiniGame('science')" class="mt-6 w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> Main Sekarang
+                    </button>
+                </div>
+
+                <!-- Game Card 4: Minda Teka-Teki -->
+                <div data-age="8-10" class="game-item bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-brand-500 card-shadow transition flex flex-col justify-between group">
+                    <div>
+                        <div class="h-40 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 p-6 flex flex-col justify-between text-white mb-4 relative overflow-hidden group-hover:scale-[1.02] transition">
+                            <i class="fa-solid fa-lightbulb absolute -bottom-4 -right-4 text-7xl text-white/20"></i>
+                            <span class="self-start px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">Logik • Umur 8-10</span>
+                            <h3 class="font-extrabold text-xl font-heading">Minda Teka-Teki</h3>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Strategi & Penyelesaian</h4>
+                        <p class="text-xs text-slate-500">Asah minda logik dan kemahiran menyelesaikan masalah melangkah demi langkah.</p>
+                        <div class="flex items-center mt-3 text-amber-500 text-xs gap-1">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                            <span class="text-slate-400 ml-1">(4.7/5)</span>
+                        </div>
+                    </div>
+                    <button onclick="openMiniGame('logic')" class="mt-6 w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> Main Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Mini Game Container (Initially Hidden) -->
+            <div id="active-game-box" class="hidden bg-white rounded-3xl border-2 border-brand-500 p-6 sm:p-10 shadow-2xl relative mb-12">
+                <button onclick="closeMiniGame()" class="absolute top-6 right-6 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-xmark"></i> Tutup Permainan
+                </button>
+                <div id="mini-game-content"></div>
+            </div>
+        </section>
+
+        <!-- SECTION: PARENT DASHBOARD PREVIEW -->
+        <section id="section-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">Dashboard Ibu Bapa</span>
+                    <h2 class="text-3xl font-extrabold font-heading text-slate-900 mt-2">Pantau Kemajuan Anak Secara Real-Time</h2>
+                    <p class="text-sm text-slate-500 mt-1">Semak skor penguasaan subjek, masa skrin harian, dan tetapkan had kawalan dengan mudah.</p>
+                </div>
+                <button onclick="showToast('Laporan PDF mingguan berjaya dimuat turun!')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> Muat Turun Laporan PDF
+                </button>
+            </div>
+
+            <!-- Child Profile Selector Tabs -->
+            <div class="flex items-center space-x-4 mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm inline-flex">
+                <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg">
+                    AF
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900">Alif Rayyan (Umur 8 Tahun)</h4>
+                    <p class="text-xs text-slate-400">Tahap 1 • 7 Hari Berturut-turut Aktif</p>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold uppercase">Matematik</p>
+                        <h4 class="text-2xl font-extrabold font-heading text-slate-900">88%</h4>
+                        <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-arrow-up"></i> +14% minggu ini</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-fuchsia-50 text-fuchsia-600 flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold uppercase">Bahasa & Ejaan</p>
+                        <h4 class="text-2xl font-extrabold font-heading text-slate-900">82%</h4>
+                        <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-arrow-up"></i> +9% minggu ini</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold uppercase">Logik Minda</p>
+                        <h4 class="text-2xl font-extrabold font-heading text-slate-900">95%</h4>
+                        <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-arrow-up"></i> +18% minggu ini</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold uppercase">Masa Skrin Hari Ini</p>
+                        <h4 class="text-2xl font-extrabold font-heading text-slate-900">40 Minit</h4>
+                        <span class="text-[10px] text-slate-500 font-medium">Had Harian: 1 Jam</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen Time Controller & Activity Log -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Screen Time Controller -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <h3 class="text-lg font-bold font-heading text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half text-brand-600"></i> Kawalan Masa Skrin Pintar
+                    </h3>
+                    <p class="text-xs text-slate-500">Tetapkan had masa maksimum bermain setiap hari supaya anak mengekalkan keseimbangan hidup.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-xs font-bold text-slate-700">
+                            <span>Had Harian</span>
+                            <span id="screen-limit-val" class="text-brand-600">60 Minit / Hari</span>
+                        </div>
+                        <input type="range" min="15" max="180" step="15" value="60" oninput="updateScreenLimit(this.value)" class="w-full accent-brand-600 cursor-pointer">
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start space-x-3">
+                        <i class="fa-solid fa-circle-check text-brand-600 mt-0.5"></i>
+                        <p class="text-xs text-emerald-800">Selepas had masa tercapai, aplikasi akan berkunci secara automatik untuk menggalakkan rehat mata.</p>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Feed -->
+                <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <h3 class="text-lg font-bold font-heading text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-brand-600"></i> Log Aktiviti Terkini Alif
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-calculator"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-xs sm:text-sm text-slate-900">Menyelesaikan Maths Safari (Tahap 2)</h5>
+                                    <p class="text-[10px] text-slate-400">Hari ini, 10:15 pagi • Skor: 10/10</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+50 Bintang</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-fuchsia-100 text-fuchsia-600 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-book-bookmark"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-xs sm:text-sm text-slate-900">Bermain Kosa Kata Juara</h5>
+                                    <p class="text-[10px] text-slate-400">Semalam, 04:30 petang • Ketepatan 90%</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+40 Bintang</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-atom"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-xs sm:text-sm text-slate-900">Meneroka Sains Kapsul Angkasa</h5>
+                                    <p class="text-[10px] text-slate-400">2 hari lalu, 03:00 petang • Selesai</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+60 Bintang</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: BENEFITS & FEATURES -->
+        <section id="section-benefits" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 uppercase tracking-wider">Kelebihan Eksklusif</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900">Kenapa Ibu Bapa Memilih MyIQKids?</h2>
+                <p class="text-sm sm:text-base text-slate-600">Direka khas untuk memberikan ketenangan fikiran kepada ibu bapa dan keseronokan tanpa henti kepada anak-anak.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-brand-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-lg font-heading text-slate-900 mb-2">100% Selamat & Tanpa Iklan</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">Tiada gangguan iklan pihak ketiga atau pautan luar. Persekitaran digital yang bersih dan disahkan selamat.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="font-bold text-lg font-heading text-slate-900 mb-2">Belajar Sambil Bermain</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">Menggunakan teknik gamifikasi moden untuk memupuk minat semula jadi anak terhadap Matematik, Sains, & Bahasa.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="font-bold text-lg font-heading text-slate-900 mb-2">Laporan Ibu Bapa Pintar</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">Dapatkan ringkasan harian dan mingguan terus ke telefon pintar anda untuk memantau kemajuan anak.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: PRICING & SUBSCRIPTION -->
+        <section id="section-pricing" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 uppercase tracking-wider">Pelan Langganan Ibu Bapa</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900">Pelaburan Terbaik untuk Masa Depan Bijak Anak</h2>
+                <p class="text-sm sm:text-base text-slate-600">Pilih pelan langganan fleksibel tanpa kontrak tersembunyi. Batalkan pada bila-bila masa.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                <!-- Trial Plan -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Percubaan 7 Hari</span>
+                        <h3 class="font-bold font-heading text-2xl text-slate-900 mt-4 mb-2">Pelan Percubaan</h3>
+                        <p class="text-xs text-slate-500 mb-6">Nikmati akses penuh selama seminggu tanpa sebarang bayaran.</p>
+                        <div class="text-4xl font-extrabold font-heading text-slate-900 mb-6">RM 0 <span class="text-xs text-slate-400 font-normal">/ 7 hari</span></div>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Akses semua 10+ permainan</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> 100% Tanpa Iklan</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Laporan ibu bapa asas</li>
+                        </ul>
+                    </div>
+                    <button onclick="showToast('Tahniah! Akaun Percubaan 7 Hari diaktifkan.')" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+                        Mula Percuma Sekarang
+                    </button>
+                </div>
+
+                <!-- Monthly Plan (Featured) -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-brand-500 shadow-xl flex flex-col justify-between relative transform lg:-translate-y-2">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-brand-600 to-blue-600 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
+                        Paling Popular 🔥
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-emerald-50 px-3 py-1 rounded-full">Bulanan</span>
+                        <h3 class="font-bold font-heading text-2xl text-slate-900 mt-4 mb-2">Pelan Ibu Bapa</h3>
+                        <p class="text-xs text-slate-500 mb-6">Akses tanpa had untuk 1 orang anak dengan laporan penuh.</p>
+                        <div class="text-4xl font-extrabold font-heading text-slate-900 mb-6">RM 29 <span class="text-xs text-slate-400 font-normal">/ bulan</span></div>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Akses SEMUA permainan tanpa had</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Laporan mingguan terperinci</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Kawalan masa skrin pintar</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Sokongan keutamaan</li>
+                        </ul>
+                    </div>
+                    <button onclick="showToast('Langganan Bulanan Berjaya Diaktifkan (Mod Simulasi)!')" class="w-full py-3 bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold rounded-xl text-sm shadow-lg transition">
+                        Langgan Sekarang
+                    </button>
+                </div>
+
+                <!-- Annual Plan (Save 40%) -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Jimat 40% 🌟</span>
+                        <h3 class="font-bold font-heading text-2xl text-slate-900 mt-4 mb-2">Pelan Tahunan VIP</h3>
+                        <p class="text-xs text-slate-500 mb-6">Nilai terbaik untuk pembelajaran jangka panjang anak anda.</p>
+                        <div class="text-4xl font-extrabold font-heading text-slate-900 mb-6">RM 19 <span class="text-xs text-slate-400 font-normal">/ bulan (Billed Annually)</span></div>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Semua ciri Pelan Bulanan</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Profil berasingan untuk 3 anak</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Laporan kemajuan eksklusif</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500"></i> Jimat sehingga RM120 setahun</li>
+                        </ul>
+                    </div>
+                    <button onclick="showToast('Langganan Tahunan Berjaya Diaktifkan (Mod Simulasi)!')" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition">
+                        Pilih Pelan Tahunan
+                    </button>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="mt-20 max-w-4xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <h3 class="text-2xl font-extrabold font-heading text-slate-900">Soalan Lazim (FAQ) Ibu Bapa</h3>
+                    <p class="text-xs text-slate-500">Segala yang anda perlu tahu mengenai keselamatan dan sistem MyIQKids.</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Adakah platform ini benar-benar selamat daripada iklan?</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Ya, 100%! MyIQKids dijamin bebas daripada iklan pihak ketiga, tiada pautan luar, dan tiada pop-up yang boleh mengganggu fokus anak anda.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Berapakah had masa skrin yang disyorkan?</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Pakar menyarankan sekitar 45 minit hingga 1 jam sehari untuk pembelajaran interaktif. Anda boleh menetapkan had ini melalui Dashboard Ibu Bapa.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Adakah silibus mengikut piawaian sekolah?</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Ya, setiap modul permainan dibangunkan berdasarkan silibus asas pendidikan awal dan rendah yang menyeronokkan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 text-xs font-bold">
+        <i class="fa-solid fa-circle-check text-brand-400 text-base"></i>
+        <span id="toast-message">Tindakan berjaya</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold">
+                    <i class="fa-solid fa-puzzle-piece text-xs"></i>
+                </div>
+                <span class="text-base font-bold font-heading text-slate-900">MyIQKids Academy</span>
+            </div>
+            <p class="text-xs text-slate-400">&copy; 2026 MyIQKids. Hak Cipta Terpelihara. Platform Permainan Pendidikan Selamat untuk Anak.</p>
+            <div class="flex space-x-4 text-slate-400">
+                <a href="#" class="hover:text-brand-600 transition"><i class="fa-brands fa-facebook text-base"></i></a>
+                <a href="#" class="hover:text-brand-600 transition"><i class="fa-brands fa-instagram text-base"></i></a>
+                <a href="#" class="hover:text-brand-600 transition"><i class="fa-brands fa-youtube text-base"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Section Switcher
+        function switchSection(sectionId) {
+            const sections = ['home', 'games', 'dashboard', 'benefits', 'pricing'];
+            sections.forEach(s => {
+                const el = document.getElementById(`section-${s}`);
+                if (el) el.classList.add('hidden');
+                const navBtn = document.getElementById(`nav-${s}`);
+                if (navBtn) navBtn.classList.remove('text-brand-600', 'font-bold');
+            });
+            const target = document.getElementById(`section-${sectionId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            const activeNav = document.getElementById(`nav-${sectionId}`);
+            if (activeNav) activeNav.classList.add('text-brand-600', 'font-bold');
+        }
+
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Age Group Game Filtering
+        function filterGames(ageGroup) {
+            const buttons = ['all', '5-7', '8-10', '11-12'];
+            buttons.forEach(b => {
+                const btn = document.getElementById(`filter-${b}`);
+                if (btn) {
+                    if (b === ageGroup) {
+                        btn.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-md transition";
+                    } else {
+                        btn.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition";
+                    }
+                }
+            });
+
+            const cards = document.querySelectorAll('.game-item');
+            cards.forEach(card => {
+                if (ageGroup === 'all' || card.getAttribute('data-age') === ageGroup) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Screen Time Limit Slider
+        function updateScreenLimit(val) {
+            document.getElementById('screen-limit-val').innerText = `${val} Minit / Hari`;
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        // --- INTERACTIVE MINI GAMES ENGINE ---
+
+        function closeMiniGame() {
+            document.getElementById('active-game-box').classList.add('hidden');
+            document.getElementById('games-grid').classList.remove('hidden');
+        }
+
+        function openMiniGame(gameType) {
+            document.getElementById('games-grid').classList.add('hidden');
+            const box = document.getElementById('active-game-box');
+            box.classList.remove('hidden');
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+
+            const content = document.getElementById('mini-game-content');
+            content.innerHTML = '';
+
+            if (gameType === 'math') {
+                initMathSafariGame(content);
+            } else if (gameType === 'word') {
+                initWordGame(content);
+            } else if (gameType === 'science') {
+                initScienceGame(content);
+            } else if (gameType === 'logic') {
+                initLogicGame(content);
+            }
+        }
+
+        // 1. Maths Safari Game
+        let mathScore = 0;
+        let num1 = 0, num2 = 0, correctAns = 0;
+
+        function initMathSafariGame(container) {
+            mathScore = 0;
+            container.innerHTML = `
+                <div class="max-w-md mx-auto text-center space-y-6">
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Maths Safari 🦁</span>
+                        <span class="text-sm font-extrabold text-brand-600 bg-emerald-50 px-3 py-1 rounded-full">Skor: <span id="m-score">0</span></span>
+                    </div>
+                    <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 p-8 rounded-3xl text-white shadow-lg space-y-3">
+                        <p class="text-xs uppercase tracking-widest text-blue-200 font-bold">Berapakah hasil tambah ini?</p>
+                        <h3 id="m-eq" class="text-4xl font-extrabold font-heading">4 + 5 = ?</h3>
+                    </div>
+                    <div id="m-opts" class="grid grid-cols-2 gap-4"></div>
+                </div>
+            `;
+            genMathQ();
+        }
+
+        function genMathQ() {
+            num1 = Math.floor(Math.random() * 8) + 1;
+            num2 = Math.floor(Math.random() * 8) + 1;
+            correctAns = num1 + num2;
+            document.getElementById('m-eq').innerText = `${num1} + ${num2} = ?`;
+
+            let opts = [correctAns, correctAns + 2, correctAns - 1, correctAns + 3];
+            opts = opts.sort(() => Math.random() - 0.5);
+
+            const optDiv = document.getElementById('m-opts');
+            optDiv.innerHTML = '';
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "py-4 bg-slate-100 hover:bg-brand-600 hover:text-white text-slate-800 font-extrabold text-lg rounded-2xl border border-slate-200 transition shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => checkMathQ(opt);
+                optDiv.appendChild(btn);
+            });
+        }
+
+        function checkMathQ(val) {
+            if (val === correctAns) {
+                mathScore += 10;
+                document.getElementById('m-score').innerText = mathScore;
+                showToast('Betul! Hebat sekali! 🎉');
+                if (mathScore >= 30) {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    showToast('Tahniah! Misi Maths Safari selesai!');
+                }
+                genMathQ();
+            } else {
+                showToast('Cuba lagi! Hitung dengan teliti.');
+            }
+        }
+
+        // 2. Kosa Kata Juara Game
+        let wordItems = [
+            { scrambled: "B U K U", correct: "BUKU", hint: "Objek untuk membaca ilmu" },
+            { scrambled: "E P A L", correct: "EPAL", hint: "Buah berwarna merah" },
+            { scrambled: "K U C I N G", correct: "KUCING", hint: "Haiwan berbulu 'meow'" }
+        ];
+        let wordIdx = 0;
+
+        function initWordGame(container) {
+            wordIdx = 0;
+            renderWordQ(container);
+        }
+
+        function renderWordQ(container) {
+            if (wordIdx >= wordItems.length) {
+                container.innerHTML = `
+                    <div class="text-center space-y-4 py-8">
+                        <div class="w-16 h-16 bg-emerald-100 text-brand-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold font-heading text-slate-900">Tahniah! Kosa Kata Juara Selesai!</h3>
+                        <p class="text-xs text-slate-500">Anda berjaya menyusun semua perkataan.</p>
+                        <button onclick="openMiniGame('word')" class="px-6 py-3 bg-brand-600 text-white rounded-xl font-bold text-xs">Main Semula</button>
+                    </div>
+                `;
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                return;
+            }
+
+            const item = wordItems[wordIdx];
+            container.innerHTML = `
+                <div class="max-w-md mx-auto text-center space-y-6">
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Kosa Kata Juara 📚</span>
+                        <span class="text-sm font-extrabold text-brand-600 bg-emerald-50 px-3 py-1 rounded-full">Soalan ${wordIdx + 1} / ${wordItems.length}</span>
+                    </div>
+                    <div class="bg-gradient-to-tr from-fuchsia-600 to-pink-600 p-8 rounded-3xl text-white shadow-lg space-y-3">
+                        <p class="text-xs uppercase tracking-widest text-pink-200 font-bold">Susun huruf berikut:</p>
+                        <h3 class="text-3xl font-extrabold font-heading tracking-widest">${item.scrambled}</h3>
+                        <p class="text-xs text-pink-100 italic">Pembayang: ${item.hint}</p>
+                    </div>
+                    <div class="space-y-3">
+                        <input type="text" id="w-input" placeholder="Taip jawapan..." class="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl text-center font-bold text-slate-800 uppercase text-sm focus:outline-none focus:border-brand-500">
+                        <button onclick="checkWordAns('${item.correct}')" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl shadow-md transition text-sm">
+                            Semak Jawapan
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkWordAns(correct) {
+            const val = document.getElementById('w-input').value.trim().toUpperCase();
+            if (val === correct) {
+                showToast('Betul! Hebat sekali! 🌟');
+                wordIdx++;
+                setTimeout(() => renderWordQ(document.getElementById('mini-game-content')), 1000);
+            } else {
+                showToast('Cuba lagi! Ejaan belum tepat.');
+            }
+        }
+
+        // 3. Sains Kapsul Game
+        let sciQs = [
+            { q: "Apakah planet terdekat dengan Matahari?", opts: ["Marikh", "Utarid", "Bumi"], ans: 1 },
+            { q: "Apakah organ utama manusia berfikir?", opts: ["Otak", "Jantung", "Hati"], ans: 0 }
+        ];
+        let sciIdx = 0;
+
+        function initScienceGame(container) {
+            sciIdx = 0;
+            renderScienceQ(container);
+        }
+
+        function renderScienceQ(container) {
+            if (sciIdx >= sciQs.length) {
+                container.innerHTML = `
+                    <div class="text-center space-y-4 py-8">
+                        <div class="w-16 h-16 bg-emerald-100 text-brand-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                            <i class="fa-solid fa-atom"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold font-heading text-slate-900">Kuiz Sains Kapsul Selesai!</h3>
+                        <p class="text-xs text-slate-500">Saintis cilik yang hebat!</p>
+                        <button onclick="openMiniGame('science')" class="px-6 py-3 bg-brand-600 text-white rounded-xl font-bold text-xs">Main Semula</button>
+                    </div>
+                `;
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                return;
+            }
+
+            const item = sciQs[sciIdx];
+            let optsHtml = '';
+            item.opts.forEach((opt, idx) => {
+                optsHtml += `<button onclick="checkSciAns(${idx}, ${item.ans})" class="w-full py-3.5 bg-slate-50 hover:bg-brand-600 hover:text-white text-slate-800 font-bold rounded-2xl border border-slate-200 transition text-sm">${opt}</button>`;
+            });
+
+            container.innerHTML = `
+                <div class="max-w-md mx-auto text-center space-y-6">
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Sains Kapsul 🔬</span>
+                        <span class="text-sm font-extrabold text-brand-600 bg-emerald-50 px-3 py-1 rounded-full">Soalan ${sciIdx + 1} / ${sciQs.length}</span>
+                    </div>
+                    <div class="bg-gradient-to-tr from-emerald-600 to-teal-600 p-8 rounded-3xl text-white shadow-lg space-y-3">
+                        <h3 class="text-xl font-bold font-heading">${item.q}</h3>
+                    </div>
+                    <div class="space-y-3">${optsHtml}</div>
+                </div>
+            `;
+        }
+
+        function checkSciAns(selected, correct) {
+            if (selected === correct) {
+                showToast('Betul! Bijak sungguh! 🌟');
+                sciIdx++;
+                setTimeout(() => renderScienceQ(document.getElementById('mini-game-content')), 1000);
+            } else {
+                showToast('Cuba lagi!');
+            }
+        }
+
+        // 4. Minda Teka-Teki (Logic Labyrinth)
+        let robotPos = 0;
+        const targetPos = 3;
+
+        function initLogicGame(container) {
+            robotPos = 0;
+            renderLogicBoard(container);
+        }
+
+        function renderLogicBoard(container) {
+            let gridHtml = '';
+            for (let i = 0; i < 4; i++) {
+                let cellContent = i === robotPos ? '🤖' : (i === targetPos ? '⭐' : '');
+                gridHtml += `
+                    <div class="h-20 bg-slate-50 border-2 ${i === robotPos ? 'border-brand-500 bg-emerald-50' : 'border-slate-200'} rounded-2xl flex items-center justify-center text-3xl font-bold shadow-sm">
+                        ${cellContent}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="max-w-md mx-auto text-center space-y-6">
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Minda Teka-Teki 💡</span>
+                        <span class="text-sm font-extrabold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Bimbing ke ⭐</span>
+                    </div>
+                    <p class="text-xs text-slate-500">Gunakan butang di bawah untuk menggerakkan robot sampai ke bintang emas.</p>
+                    <div class="grid grid-cols-4 gap-3">${gridHtml}</div>
+                    <div class="flex justify-center space-x-4 pt-2">
+                        <button onclick="moveRobot(-1)" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Kiri
+                        </button>
+                        <button onclick="moveRobot(1)" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-md">
+                            Kanan <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function moveRobot(dir) {
+            robotPos += dir;
+            if (robotPos < 0) robotPos = 0;
+            if (robotPos > 3) robotPos = 3;
+
+            renderLogicBoard(document.getElementById('mini-game-content'));
+            if (robotPos === targetPos) {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                showToast('Tahniah! Robot berjaya menemui Bintang!');
+            }
+        }
+    </script>
+</body>
+</html>
